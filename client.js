@@ -10,10 +10,13 @@ class employee {
 }//created employee class
 let employees = [];
 let budget = 20000;
+let employeeDataFields = 5;
 //defined storage and constraint variables
 function readyNow() {
     $('#submitButton').on('click', addEmployee);
     $('#employeeList').on('click', 'button', deleteEmployee);
+    $('#csvInput').on('change', readFile);
+    //added event to make import csv functionality run
 }//added event handlers to submit button and generated delete buttons
 
 function addEmployee() {
@@ -37,7 +40,7 @@ function addEmployee() {
 
 function deleteEmployee() {
     let currentID = $(this).data('iD');
-    //get employeeID that was stored to data of delete buttom
+    //get employeeID that was stored to data of delete button
     for (let i = 0; i < employees.length; i++){
         if (employees[i].iD == currentID) {
             employees.splice(i, 1);
@@ -56,16 +59,6 @@ function resetInputs(){
     $('#title').val('');
     $('#employeeSalary').val('');
 }//end resetInputs function
-
-// function addData(arrayOfIDS){
-//     let counter = 0;
-//     let len = arrayOfIDS.length; 
-//     for (i of $('.deleteButton')) {
-//         $(i).data('iD', arrayOfIDS[counter]);
-//         console.log($(i).data('iD'));
-//         counter++;
-//     }
-//} add data to each button of the employeeID after button is created
 
 function updateTable(){
     $('#employeeList').empty();
@@ -106,3 +99,57 @@ function checkBudget(monthlyExpense){
     }
 }//end checkBudget
 
+// code below this point is part of import csv functionality
+
+function readFile(event) {
+    let input = event.target;
+    let reader = new FileReader();
+    //creating file reader to parse csv file
+    reader.onload = function () {
+        let readText = reader.result;
+        toArray(readText);
+        //send reader results to the toArray function
+    }//declare function to execute when reader is finished running
+    reader.readAsText(input.files[0]);
+    //executing the fileReader on the csv input file
+};
+
+function toArray(string){
+    let newArray = [];
+    let j = -1;
+    //declared container and counter variables
+    for (let i = 0; i <= string.length; i++ ){
+        let stringItem = string.charAt(i);
+        if (stringItem == ',' || stringItem == '\n'
+            || i == string.length){
+            newArray.push(string.slice(j + 1, i));
+            j = i;
+        }//loop through string characters to slice out employee
+        //data and push it into the array
+    }
+   refactorArray(newArray);
+   //passing new array of employee data to refactoring function
+}//end toArray function
+
+function refactorArray(anArray){
+    let newArray = [];
+    let j = employeeDataFields - 1;
+    //declared container and counter variables
+    for (let i = 0; i < anArray.length; i += employeeDataFields) {
+        newArray.push(anArray.slice(i, j + 1));
+        j += employeeDataFields;
+    }//loop through the parameter array, splice off sets of data
+    //belonging to each unique employee, push each new array into
+    //an array of arrays of employee data 
+    csvToEmployeeObjects(newArray);
+}//end refactorArray function
+
+function csvToEmployeeObjects(empArr){
+    for (let i = 0; i < empArr.length; i++){
+        employees.push(new employee(empArr[i][0],empArr[i][1],empArr[i][2],
+            empArr[i][3], empArr[i][4]));
+    }//loop through array of employees from csv and create
+    //employee objects
+    updateTable();
+    calculateExpense();
+}// end csvToEmployeeObjects function 
