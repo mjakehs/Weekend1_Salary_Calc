@@ -20,6 +20,7 @@ function readyNow() {
 }//added event handlers to submit button and generated delete buttons
 
 function addEmployee() {
+if (inputConditional() === true) {
     let firstName = $('#firstName').val();
     let lastName = $('#lastName').val();
     let iD = $('#employeeID').val();
@@ -36,6 +37,7 @@ function addEmployee() {
     //calculates monthly expense and display to page
     resetInputs();
     //sets input fields to placeholder value
+    }
 }// end add employee function
 
 function deleteEmployee() {
@@ -58,6 +60,7 @@ function resetInputs(){
     $('#employeeID').val('');
     $('#title').val('');
     $('#employeeSalary').val('');
+    $('#csvInput').val('');
 }//end resetInputs function
 
 function updateTable(){
@@ -68,9 +71,9 @@ function updateTable(){
         $('#employeeList').append('<tr class="employeeData"><td>'
             + i.firstName + '</td><td>' + i.lastName + '</td><td>'
             + i.iD + '</td><td>' + i.title + '</td><td>'
-            + i.annualSalary + '</td><td>' +  `<button class="deleteButton">
+            + i.annualSalary + '</td><td>' +  `<button class="btn btn-danger">
             Delete</button>` + '</td></tr>');
-        $($('.deleteButton')[counter]).data('iD', i.iD);
+        $($('.btn-danger')[counter]).data('iD', i.iD);
         counter++;
         //assigning data of employeeID to each .deleteButton
     }
@@ -92,12 +95,28 @@ function calculateExpense(){
 
 function checkBudget(monthlyExpense){
     if (monthlyExpense > budget) {
-        $('#salaryOutput, #dollaSign').css('background-color', 'red'); 
-    }
+        $('#salaryOutput, #dollaSign').css('color', 'red'); 
+    }//used color instead of background color because I think
+    //it looks better.
     else {
-        $('#salaryOutput, #dollaSign').css('background-color', 'white');
+        $('#salaryOutput, #dollaSign').css('color', 'black');
     }
 }//end checkBudget
+
+function inputConditional(){
+    if (
+    $('#firstName').val() != '' &&
+    $('#lastName').val() != '' &&
+    $('#employeeID').val() != '' &&
+    $('#title').val() != '' &&
+    $('#employeeSalary').val() != '' 
+    ) {
+        return true
+    }//only run addEmployee if inputs have values
+    else {
+        return false
+    }
+}//end inputConditional
 
 // code below this point is part of import csv functionality
 
@@ -152,4 +171,5 @@ function csvToEmployeeObjects(empArr){
     //employee objects
     updateTable();
     calculateExpense();
+    resetInputs();
 }// end csvToEmployeeObjects function 
