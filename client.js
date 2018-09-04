@@ -86,20 +86,24 @@ function calculateExpense(){
         totalSalary += salary;
     }//loop through employees to get sum of salaries
     let monthlyExpense = totalSalary / 12;
-    monthlyExpense = monthlyExpense.toFixed(2)
-    $('#salaryOutput').html(monthlyExpense);
-    //refactor salary number to monthly expense and append to dom
+    monthlyExpense = monthlyExpense.toFixed(2);
+    monthlyExpense = parseFloat(monthlyExpense);
     checkBudget(monthlyExpense);
     //adjust color of output if expense > budget
+    monthlyExpense = monthlyExpense.toLocaleString();
+    $('#salaryOutput').text(monthlyExpense);
+    //refactor salary number to monthly expense and append to dom
 }//end calculateExpense
 
 function checkBudget(monthlyExpense){
     if (monthlyExpense > budget) {
-        $('#salaryOutput, #dollaSign').css('color', 'red'); 
+        $('#salaryOutput, #dollaSign').css('color', 'red');
+        $('#overBudget').css('display', 'block'); 
     }//used color instead of background color because I think
     //it looks better.
     else {
         $('#salaryOutput, #dollaSign').css('color', 'black');
+        $('#overBudget').css('display', 'none');
     }
 }//end checkBudget
 
